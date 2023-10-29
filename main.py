@@ -1,11 +1,12 @@
+"""Flask main file"""
 import os
+import time
+import jwt
 
 from flask import Flask
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 
-import jwt
-import time
 from jwt.exceptions import InvalidTokenError
 from jwt import PyJWKClient
 
@@ -25,6 +26,7 @@ jwks_client = PyJWKClient(url)
 
 
 def validate_access_token(access_token, client_id):
+    """Validate given access token"""
     try:
         signing_key = jwks_client.get_signing_key_from_jwt(access_token)
 
@@ -64,11 +66,13 @@ oauth.register(
 
 @app.route('/login')
 def login():
+    """Login route"""
     return oauth.auth0.authorize_redirect(redirect_uri='http://localhost:5000/callback')
 
 
 @app.route('/callback', methods=["GET", "POST"])
 def callback():
+    """Callback route"""
     token = oauth.auth0.authorize_access_token()
     # Store user information in the session or your database as needed
     print(token)
